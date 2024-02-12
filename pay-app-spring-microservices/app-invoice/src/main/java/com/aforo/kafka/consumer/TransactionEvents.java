@@ -23,10 +23,28 @@ public class TransactionEvents {
 
     public void processTransactionEvent(ConsumerRecord<Integer, String> consumerRecord) throws JsonProcessingException {
         Invoice event = objectMapper.readValue(consumerRecord.value(), Invoice.class);
-        log.info("Actulizando Invoice ***" + event.getIdInvoice());
-        event.setState(1);
-   		log.info("Se ha pagado la factura # " + event.getIdInvoice());
+        Invoice existingInvoice = _dao.findById(event.getIdInvoice()).orElse(null);
 
-        _dao.save(event);
+        if (existingInvoice != null) {
+
+            // Actualizar el monto acumulando el nuevo monto al existente
+            double currentAmount = existingInvoice.getAmount();
+            double newAmount = event.getAmount();
+            double updatedAmount = currentAmount - newAmount;
+            existingInvoice.setAmount(updatedAmount);
+
+            // Establecer el nuevo estado u otras actualizaciones si es necesario
+            Integer state = updatedAmount < 0 ? 1 : 0;
+            log.info("Cambio recibido: " + updatedAmount);
+            existingInvoice.setState(state);
+
+            log.info("Se ha pagado la factura #" + event.getIdInvoice() + ". Nuevo monto: " + updatedAmount);
+
+            // Guardar la factura actualizada en la base de datos
+            _dao.save(existingInvoice);
+        } else {
+            log.warn("La factura con ID " + event.getIdInvoice() + " no se encontró en la base de datos.");
+        }
+        
     }
 }
