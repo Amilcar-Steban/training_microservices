@@ -1,5 +1,5 @@
 docker network create distribuidos
-docker run -p 5432:5432 --name postgres --network distribuidos -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=db_invoice -d icesiops/postgres:0.1.0
+docker run -p 5432:5432 --name postgres --network distribuidos -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=db_invoice -d stebanrodriguez/postgres:0.1.0
 
 docker run -p 3306:3306 --name mysql --network distribuidos -e MYSQL_ROOT_PASSWORD=mysql -e MYSQL_DATABASE=db_operation -d stebanrodriguez/mysql:0.1.0
 
@@ -9,13 +9,13 @@ docker run -p 2181:2181 -d -p 9092:9092 --name servicekafka --network distribuid
 
 docker run -d -p 8888:8888 --network distribuidos --name app-config stebanrodriguez/app-config:0.1.0
 
-docker run -d -p 8006:8006 --network distribuidos --name app-invoice stebanrodriguez/app-invoice:v1
+docker run -d -p 8006:8006 --network distribuidos --name app-invoice stebanrodriguez/app-invoice:0.1.0
 
-docker run -d -p 8010:8010 --network distribuidos --name app-pay stebanrodriguez/app-pay:v1
+docker run -d -p 8010:8010 --network distribuidos --name app-pay stebanrodriguez/app-pay:0.1.0
 
-docker run -d -p 8082:8082 --network distribuidos --name app-transaction stebanrodriguez/app-transaction:v1
+docker run -d -p 8082:8082 --network distribuidos --name app-transaction stebanrodriguez/app-transaction:0.1.0
 
-psql -h localhost -d db_invoice -U postgres -f data.sql
+psql -p 5432 -h localhost -d db_invoice -U postgres -f data.sql
 
 #### consul
 
