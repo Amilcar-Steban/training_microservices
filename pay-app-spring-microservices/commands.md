@@ -7,15 +7,15 @@ docker run -p 27017:27017 --network distribuidos --name mongodb -d mongo
 
 docker run -p 2181:2181 -d -p 9092:9092 --name servicekafka --network distribuidos -e ADVERTISED_HOST=servicekafka -e NUM_PARTITIONS=3 johnnypark/kafka-zookeeper
 
-docker run -d -p 8888:8888 --network distribuidos --name app-config icesiops/appconfig:0.1.0
+docker run -d -p 8888:8888 --network distribuidos --name app-config stebanrodriguez/app-config:0.1.0
 
-docker run -d -p 8006:8006 --network distribuidos --name app-invoice icesiops/appinvoice:0.1.0
+docker run -d -p 8006:8006 --network distribuidos --name app-invoice stebanrodriguez/app-invoice:0.1.0
 
-docker run -d -p 8010:8010 --network distribuidos --name app-pay icesiops/apppay:0.1.0
+docker run -d -p 8010:8010 --network distribuidos --name app-pay stebanrodriguez/app-pay:0.1.0
 
-docker run -d -p 8082:8082 --network distribuidos --name app-transaction icesiops/apptransaction:0.1.0
+docker run -d -p 8082:8082 --network distribuidos --name app-transaction stebanrodriguez/app-transaction:0.1.0
 
-psql -h localhost -d db_invoice -U postgres -f data.sql
+psql -p 5432 -h localhost -d db_invoice -U postgres -f data.sql
 
 #### consul
 
@@ -28,7 +28,7 @@ start dnsmasq
 modifiy resolv.conf to add ip loopback like dns server
 run command: dig app-service.service.consul
 
-docker run -d -p 8500:8500 -p 8600:8600/udp --network distribuidos --name consul consul:latest agent -server -bootstrap-expect 1 -ui -data-dir /tmp -client=0.0.0.0
+docker run -d -p 8500:8500 -p 8600:8600/udp --network distribuidos --name consul consul:1.15 agent -server -bootstrap-expect 1 -ui -data-dir /tmp -client=0.0.0.0
 
 ### Load Balancer
 Create dockerfile 
