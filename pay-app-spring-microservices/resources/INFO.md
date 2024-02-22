@@ -61,3 +61,4 @@ Microservicio que se encarga de obtener los mensajes de kafka y registrar las tr
 ```
 curl --location --request GET 'http://localhost:8082/all'
 ```
+curl --location --request GET 'http://localhost:7080/billing/v1'
